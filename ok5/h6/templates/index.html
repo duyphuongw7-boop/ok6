@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Bot Multi-TF Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-gray-700 pb-6 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-blue-400"><i class="fas fa-microchip mr-2"></i>Multi-TF Bot</h1>
+                <p class="text-gray-500 text-sm mt-1">Hệ thống theo dõi ETHUSDT Real-time</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="pos-badge" class="px-4 py-2 rounded-lg text-sm font-bold bg-gray-800 border border-gray-600">Đang tải...</span>
+                <button id="kill-switch" onclick="toggleKillSwitch()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg shadow-xl transition-all active:scale-95">
+                    KILL SWITCH
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg">
+                <p class="text-gray-400 text-xs uppercase font-bold tracking-wider">Tổng PnL</p>
+                <p id="total-pnl" class="text-2xl font-black mt-1">0.0000</p>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg text-center">
+                <p class="text-gray-400 text-xs uppercase font-bold tracking-wider">Lệnh</p>
+                <p id="total-trades" class="text-2xl font-black mt-1 text-blue-400">0</p>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg text-center">
+                <p class="text-gray-400 text-xs uppercase font-bold tracking-wider">Win Rate</p>
+                <p id="win-rate" class="text-2xl font-black mt-1 text-green-400">0%</p>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg text-center">
+                <p class="text-gray-400 text-xs uppercase font-bold tracking-wider">Profit Factor</p>
+                <p id="profit-factor" class="text-2xl font-black mt-1 text-yellow-500">0.00</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+            
+            <div class="bg-gray-800 rounded-2xl overflow-hidden border border-purple-900/50 shadow-2xl">
+                <div class="bg-purple-900/30 px-4 py-3 border-b border-purple-900/50 flex justify-between items-center">
+                    <span class="font-bold text-purple-400 text-lg uppercase tracking-widest">Khung 1 Tuần (1W)</span>
+                    <i class="fas fa-calendar-alt text-purple-500"></i>
+                </div>
+                <div class="p-2 overflow-x-auto" id="tf-1w">
+                    </div>
+            </div>
+
+            <div class="bg-gray-800 rounded-2xl overflow-hidden border border-blue-900/50 shadow-2xl">
+                <div class="bg-blue-900/30 px-4 py-3 border-b border-blue-900/50 flex justify-between items-center">
+                    <span class="font-bold text-blue-400 text-lg uppercase tracking-widest">Khung 6 Giờ (6H)</span>
+                    <i class="fas fa-clock text-blue-500"></i>
+                </div>
+                <div class="p-2 overflow-x-auto" id="tf-6h">
+                    </div>
+            </div>
+
+            <div class="bg-gray-800 rounded-2xl overflow-hidden border border-emerald-900/50 shadow-2xl">
+                <div class="bg-emerald-900/30 px-4 py-3 border-b border-emerald-900/50 flex justify-between items-center">
+                    <span class="font-bold text-emerald-400 text-lg uppercase tracking-widest text-blue-400">Khung 1 Giờ (1H)</span>
+                    <i class="fas fa-bolt text-emerald-500"></i>
+                </div>
+                <div class="p-2 overflow-x-auto" id="tf-1h">
+                    </div>
+            </div>
+
+        </div>
+
+        <div class="bg-black rounded-xl p-4 shadow-2xl border border-gray-800 border-t-gray-700">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">System Engine Logs</span>
+                <span class="text-[10px] text-green-700">Live Streaming...</span>
+            </div>
+            <div id="logs-container" class="h-48 overflow-y-auto font-mono text-[11px] text-green-600 leading-relaxed scrollbar-hide">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const formatNum = (val) => {
+            const n = parseFloat(val);
+            if (isNaN(n)) return "--";
+            const color = n > 0 ? "text-green-400" : n < 0 ? "text-red-400" : "text-gray-400";
+            return `<span class="font-mono ${color}">${n.toFixed(4)}</span>`;
+        };
+
+        function createTFTable(tfData) {
+            if (!tfData) return '<div class="p-4 text-center text-gray-600 italic">Chưa có dữ liệu...</div>';
+            return `
+                <table class="w-full text-xs text-left">
+                    <thead class="text-gray-500 uppercase border-b border-gray-700">
+                        <tr>
+                            <th class="py-2 px-2">Chỉ báo</th>
+                            <th class="py-2">T-2</th>
+                            <th class="py-2">T-1</th>
+                            <th class="py-2 text-white">T0 (Now)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-700/50">
+                        <tr>
+                            <td class="py-3 px-2 text-gray-300 font-semibold">MACD Hist</td>
+                            <td>${formatNum(tfData.macd_t2)}</td>
+                            <td>${formatNum(tfData.macd_t1)}</td>
+                            <td class="bg-gray-900/30">${formatNum(tfData.macd_t0)}</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-2 text-gray-300 font-semibold">Stoch K</td>
+                            <td>${formatNum(tfData.stoch_k_t2)}</td>
+                            <td>${formatNum(tfData.stoch_k_t1)}</td>
+                            <td class="bg-gray-900/30">${formatNum(tfData.stoch_k_t0)}</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-2 text-gray-300 font-semibold">Stoch D</td>
+                            <td>${formatNum(tfData.stoch_d_t2)}</td>
+                            <td>${formatNum(tfData.stoch_d_t1)}</td>
+                            <td class="bg-gray-900/30">${formatNum(tfData.stoch_d_t0)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function updateDashboard() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+
+                // Stats
+                const pnl = document.getElementById('total-pnl');
+                pnl.innerText = data.total_pnl.toFixed(4) + " USDT";
+                pnl.className = `text-2xl font-black mt-1 ${data.total_pnl >= 0 ? 'text-green-400' : 'text-red-500'}`;
+                
+                document.getElementById('total-trades').innerText = data.total_trades;
+                document.getElementById('win-rate').innerText = data.win_rate + "%";
+                document.getElementById('profit-factor').innerText = data.profit_factor;
+
+                // Vị thế
+                const pb = document.getElementById('pos-badge');
+                pb.innerText = "POSITION: " + data.position;
+                pb.className = `px-4 py-2 rounded-lg text-sm font-bold border ${data.position === 'LONG' ? 'bg-green-900/40 border-green-500 text-green-400' : data.position === 'SHORT' ? 'bg-red-900/40 border-red-500 text-red-400' : 'bg-gray-800 border-gray-600 text-gray-400'}`;
+
+                // Indicators render
+                if (data.indicators) {
+                    document.getElementById('tf-1h').innerHTML = createTFTable(data.indicators['1h']);
+                    document.getElementById('tf-6h').innerHTML = createTFTable(data.indicators['6h']);
+                    document.getElementById('tf-1w').innerHTML = createTFTable(data.indicators['1w']);
+                }
+
+                // Logs
+                const logBox = document.getElementById('logs-container');
+                logBox.innerHTML = data.logs.map(l => `<div>${l}</div>`).join('');
+                logBox.scrollTop = logBox.scrollHeight;
+
+                // Kill switch status
+                const ks = document.getElementById('kill-switch');
+                if (data.kill_switch_active) {
+                    ks.className = "bg-yellow-500 text-black font-black py-2 px-6 rounded-lg animate-pulse";
+                    ks.innerText = "⚠️ KILL SWITCH ACTIVE";
+                } else {
+                    ks.className = "bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg shadow-xl transition-all";
+                    ks.innerText = "KILL SWITCH";
+                }
+
+            } catch (e) { console.error("Update error", e); }
+        }
+
+        async function toggleKillSwitch() {
+            // Yêu cầu nhập mật khẩu
+            const pwd = prompt("🔒 Vui lòng nhập mật khẩu để KÍCH HOẠT / TẮT Kill Switch:");
+            
+            // Nếu người dùng bấm Cancel hoặc để trống
+            if (pwd === null || pwd.trim() === "") {
+                return; 
+            }
+
+            try {
+                // Gửi request kèm mật khẩu
+                const response = await fetch('/api/kill-switch', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password: pwd })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert("✅ Lệnh thực thi thành công!");
+                    updateDashboard(); // Cập nhật UI ngay lập tức
+                } else {
+                    // Hiện thông báo lỗi nếu sai mật khẩu
+                    alert("❌ LỖI: " + result.message);
+                }
+            } catch(e) {
+                alert("❌ Lỗi khi kết nối đến máy chủ!");
+                console.error(e);
+            }
+        }
+
+        setInterval(updateDashboard, 1500);
+        updateDashboard();
+    </script>
+</body>
+</html>

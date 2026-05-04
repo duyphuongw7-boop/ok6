@@ -1,0 +1,58 @@
+{
+    "logs": [
+        "[20:45:03] \u26a0\ufe0f Ph\u00e1t hi\u1ec7n Bot Thread b\u1ecb d\u1eebng. \u0110ang kh\u1edfi \u0111\u1ed9ng l\u1ea1i...",
+        "[20:45:03] Thi\u1ebft l\u1eadp \u0111\u00f2n b\u1ea9y v\u00e0 margin...",
+        "[20:45:04] \u0110ang t\u1ea3i d\u1eef li\u1ec7u l\u1ecbch s\u1eed klines...",
+        "[20:45:05] \u2705 \u0110\u00e3 k\u1ebft n\u1ed1i WebSocket & User Data Stream th\u00e0nh c\u00f4ng!",
+        "[20:46:44] \u2705 \u0110\u00e3 kh\u00f4i ph\u1ee5c tr\u1ea1ng th\u00e1i bot_state.json!",
+        "[20:46:44] \u26a0\ufe0f Ph\u00e1t hi\u1ec7n Bot Thread b\u1ecb d\u1eebng. \u0110ang kh\u1edfi \u0111\u1ed9ng l\u1ea1i...",
+        "[20:46:44] Thi\u1ebft l\u1eadp \u0111\u00f2n b\u1ea9y v\u00e0 margin...",
+        "[20:46:45] \u0110ang t\u1ea3i d\u1eef li\u1ec7u l\u1ecbch s\u1eed klines...",
+        "[20:46:46] \u2705 \u0110\u00e3 k\u1ebft n\u1ed1i WebSocket & User Data Stream th\u00e0nh c\u00f4ng!",
+        "[20:48:00] \ud83d\udea8 KILL SWITCH \u0110\u00c3 \u0110\u00d3NG V\u1eca TH\u1ebe HI\u1ec6N T\u1ea0I TH\u00c0NH C\u00d4NG!",
+        "[20:48:00] \ud83d\udea8 KILL SWITCH: B\u1eacT",
+        "[20:48:08] \ud83d\udea8 KILL SWITCH: T\u1eaeT",
+        "[20:48:36] \u23f3 \u0110ANG \u0110\u00d3NG SHORT - \u0110\u1ee3i kh\u1edbp l\u1ec7nh...",
+        "[20:48:36] \ud83c\udfc1 \u0110\u00c3 \u0110\u00d3NG SHORT | Th\u1ef1c nh\u1eadn: -0.1607 USDT"
+    ],
+    "total_trades": 1,
+    "winning_trades": 0,
+    "gross_profit": 0.0,
+    "gross_loss": 0.16074860000000002,
+    "total_pnl": -0.16074860000000002,
+    "entry_fee": 0.0,
+    "current_position": "NONE",
+    "position_amt": 0.0,
+    "entry_price": 0.0,
+    "is_running": false,
+    "kill_switch": false,
+    "latest_indicators": {
+        "1h": {
+            "macd_t0": -4.307898966758803,
+            "macd_t1": -3.9561213719556694,
+            "macd_t2": -2.9597854277367333,
+            "stoch_k_t0": 0.015004638652914085,
+            "stoch_k_t1": 0.00010181532966238562,
+            "stoch_d_t0": 0.056796788147949785,
+            "stoch_d_t1": 0.14362872726046147
+        },
+        "4h": {
+            "macd_t0": 3.9241689791791483,
+            "macd_t1": 5.391783693887362,
+            "macd_t2": 7.3168653041936835,
+            "stoch_k_t0": 0.33792725606077684,
+            "stoch_k_t1": 0.5974211951968432,
+            "stoch_d_t0": 0.5412877319113353,
+            "stoch_d_t1": 0.7035586855049419
+        },
+        "1w": {
+            "macd_t0": 58.16356919488766,
+            "macd_t1": 48.12226908077821,
+            "macd_t2": 34.407742821739134,
+            "stoch_k_t0": 0.9641685613877673,
+            "stoch_k_t1": 0.8527977809891159,
+            "stoch_d_t0": 0.8447394654974804,
+            "stoch_d_t1": 0.6953766707848535
+        }
+    }
+}
